@@ -26,7 +26,7 @@ python main.py
 - **Przykład użycia**:
 http://localhost:5000/
 
-### 2. Zliczanie osób na obrazu, który został wskazany przez URL
+### 2. Zliczanie osób na obrazie, który został wskazany przez URL
 - **Endpoint**: `GET /dynamic`
 - **Parametry**: `url` - adres URL obrazu do analizy.
 - **Opis**: Pobiera obraz z podanego URL, przetwarza go za pomocą HOG i zwraca liczbę wykrytych osób.
