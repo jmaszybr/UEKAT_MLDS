@@ -27,7 +27,7 @@ class PeopleCounter(Resource):
         # Wykrywanie ludzi na obrazie
         (rects, weights) = hog.detectMultiScale(image, winStride=(4, 4), padding=(8, 8), scale=1.05)
 
-        # Zwraca liczbę wykrytych ludzi
+        # Zwraca nazwę ppliku i liczbę wykrytych ludzi
         return {'filename': filename, 'peopleCount': len(rects)}
 
 
@@ -137,7 +137,7 @@ class PeopleCounterUpload(Resource):
                 # Wykorzystanie globalnego deskryptora HOG do detekcji ludzi
                 (rects, weights) = hog.detectMultiScale(image, winStride=(4, 4), padding=(8, 8), scale=1.05)
 
-                # Zwrócenie wyniku jako JSON za pomocą return
+                # Zwrócenie wyniku za pomocą return
                 return {'filename': secure_filename(file.filename), 'peopleCount': len(rects)}, 200
             except Exception as e:
                 return {'error': str(e)}, 500
