@@ -34,4 +34,4 @@ def detect_people_and_display(image_path, winstride=(4, 4), padding=(8, 8), scal
 
 
 # Przykładowe użycie funkcji z niestandardowymi parametrami HOG
-detect_people_and_display('../images/test06.png', winstride=(4, 4), padding=(8, 8), scale=1.05)
+detect_people_and_display('test06.png', winstride=(4, 4), padding=(8, 8), scale=1.05)
