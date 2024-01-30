@@ -64,11 +64,47 @@ class PeopleCounterDynamicUrl(Resource):
 class PeopleCounterUpload(Resource):
     @staticmethod
     def get():
-        # HTML do wyświetlania formularza przesyłania obrazu
+        # HTML do wyświetlania formularza przesyłania obrazu z dodanym stylem CSS
         html = '''<!DOCTYPE html>
                   <html>
                   <head>
-                      <title>Załaduj Obraz</title>
+                      <title>Upload Image</title>
+                      <style>
+                          body {
+                              font-family: Arial, sans-serif;
+                              background-color: #f4f4f4;
+                              display: flex;
+                              flex-direction: column;
+                              align-items: center;
+                              justify-content: center;
+                              height: 100vh;
+                              margin: 0;
+                          }
+                          h1 {
+                              color: #333;
+                              margin-bottom: 20px;
+                          }
+                          form {
+                              background-color: #fff;
+                              padding: 20px;
+                              border-radius: 8px;
+                              box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                          }
+                          input[type=file] {
+                              margin-bottom: 10px;
+                          }
+                          input[type=submit] {
+                              background-color: #4CAF50;
+                              color: white;
+                              padding: 10px 15px;
+                              border: none;
+                              border-radius: 4px;
+                              cursor: pointer;
+                          }
+                          input[type=submit]:hover {
+                              background-color: #45a049;
+                          }
+                      </style>
                   </head>
                   <body>
                       <h1>Upload Image to Count People</h1>
@@ -79,6 +115,8 @@ class PeopleCounterUpload(Resource):
                   </body>
                   </html>'''
         return make_response(html)
+
+
 
     @staticmethod
     def post():
