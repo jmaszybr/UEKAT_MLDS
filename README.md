@@ -65,4 +65,4 @@ aktualizacja 30.01.2024
 
 ## Dalsze prace
 Użytkownik może posiadać swój własny formularz na stronie internetowej, który jest skonfigurowany do komunikacji z zewnętrznym API. Taki formularz pozwala użytkownikowi na wybór i przesyłanie danych do analizy. 
-Przykład jest realizowany w repozytorium: `https://github.com/jmaszybr/PhotoPeopleCounter_API.git` 
+Przykład jest realizowany w repozytorium: https://github.com/jmaszybr/PhotoPeopleCounter_API.git
