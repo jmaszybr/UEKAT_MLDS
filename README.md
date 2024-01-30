@@ -9,7 +9,7 @@ People Counter to aplikacja napisana w języku Python, która wykorzystuje bibli
 
 ### 1. Liczenie osób na statycznym obrazie
 - **Endpoint**: `GET /`
-- **Parametry**: Brak. Używa wcześniej zdefiniowanego obrazu (`test01.jpg`).
+- **Parametry**: Brak. Używa wcześniej zdefiniowanego obrazu (`test06.png`).
 - **Opis**: Endpoint przetwarza wcześniej zdefiniowany statyczny obraz i zwraca liczbę wykrytych osób.
 - **Przykład użycia**:
 http://localhost:5000/
@@ -29,16 +29,16 @@ http://127.0.0.1:5000/dynamic?url=https://www.fit.pl/img/WELLNESS/_max/nordic_wa
 Otwórz `http://localhost:5000/upload` w przeglądarce, aby użyć formularza do przesyłania.
 
 
-## Detekcja za pomocą HOG
+## Detekcja za pomocą Histogram of Oriented Gradients (HOG)
 - **Deskryptor HOG**: Używany do ekstrakcji cech z obrazów, które są następnie wykorzystywane do detekcji ludzi.
-- **Detektor ludzi**: Wbudowany detektor ludzi w OpenCV, który wykorzystuje HOG do identyfikacji obiektów podobnych do ludzi na obrazie.
+- **Detektor ludzi**: W kontekście detekcji osób, HOG jest często używany razem z maszyną wektorów nośnych (SVM - Support Vector Machine). W bibliotece OpenCV, obiekt HOGDescriptor jest konfigurowany z detektorem SVM, który jest specjalnie przeszkolony do detekcji osób. Jest to domyślny detektor osób dostarczany w tej bibliotece.
 - **Parametry**: 
 - `winStride`: Krok okna przesuwnego, przyjęto (4, 4).
 - `padding`: Padding dla każdego okna, przyjęto (8, 8).
 - `scale`: Skala obrazu, przyjęto 1.05.
  
 ## Format odpowiedzi
-Wszystkie endpointy zwracają odpowiedzi w formacie JSON. Przykładowe odpowiedzi:
+Wszystkie endpointy zwracają odpowiedzi w formacie:
 - Sukces: `{ "filename": nazwa_pliku, "peopleCount": liczba }`
 - Błąd: `{ "error": "opis błędu" }`
 
