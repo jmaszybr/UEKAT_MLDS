@@ -116,8 +116,6 @@ class PeopleCounterUpload(Resource):
                   </html>'''
         return make_response(html)
 
-
-
     @staticmethod
     def post():
         # Sprawdzenie, czy plik został przesłany
