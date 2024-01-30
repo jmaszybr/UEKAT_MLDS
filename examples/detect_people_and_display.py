@@ -1,7 +1,8 @@
 import cv2
 import imutils
 
-def detect_people_and_display(image_path, winStride=(4, 4), padding=(8, 8), scale=1.05):
+
+def detect_people_and_display(image_path, winstride=(4, 4), padding=(8, 8), scale=1.05):
     # Wczytanie obrazu
     image = cv2.imread(image_path)
     image = imutils.resize(image, width=min(500, image.shape[1]))
@@ -12,7 +13,7 @@ def detect_people_and_display(image_path, winStride=(4, 4), padding=(8, 8), scal
     hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
 
     # Wykrywanie ludzi na obrazie z użyciem podanych parametrów
-    (rects, weights) = hog.detectMultiScale(image, winStride=winStride, padding=padding, scale=scale)
+    (rects, weights) = hog.detectMultiScale(image, winStride=winstride, padding=padding, scale=scale)
 
     # Rysowanie prostokątów dookoła wykrytych ludzi
     for (x, y, w, h) in rects:
@@ -31,5 +32,6 @@ def detect_people_and_display(image_path, winStride=(4, 4), padding=(8, 8), scal
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
+
 # Przykładowe użycie funkcji z niestandardowymi parametrami HOG
-detect_people_and_display('images/test02.png', winStride=(4, 4), padding=(8, 8), scale=1.05)
+detect_people_and_display('images/test06.png', winstride=(4, 4), padding=(8, 8), scale=1.05)
