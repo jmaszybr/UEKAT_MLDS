@@ -3,7 +3,7 @@ import requests
 import imutils
 from io import BytesIO
 import numpy as np
-from flask import Flask, request, make_response, jsonify
+from flask import Flask, request, make_response
 from flask_restful import Resource, Api
 from werkzeug.utils import secure_filename
 
@@ -16,7 +16,8 @@ api = Api(app)
 
 
 class PeopleCounter(Resource):
-    def get(self):
+    @staticmethod
+    def get():
         # Wczytywanie obrazu
         filename = 'test01.jpg'
         image = cv2.imread(filename)
@@ -31,7 +32,8 @@ class PeopleCounter(Resource):
 
 
 class PeopleCounterDynamicUrl(Resource):
-    def get(self):
+    @staticmethod
+    def get():
         # Pobieranie adresu URL z parametrów zapytania
         url = request.args.get('url')
 
@@ -49,7 +51,6 @@ class PeopleCounterDynamicUrl(Resource):
             image = cv2.imdecode(np.frombuffer(image_bytes.read(), np.uint8), 1)
             image = imutils.resize(image, width=min(500, image.shape[1]))
 
-
             # Wykrywanie ludzi na obrazie
             (rects, weights) = hog.detectMultiScale(image, winStride=(4, 4), padding=(8, 8), scale=1.05)
 
@@ -61,7 +62,8 @@ class PeopleCounterDynamicUrl(Resource):
 
 
 class PeopleCounterUpload(Resource):
-    def get(self):
+    @staticmethod
+    def get():
         # HTML do wyświetlania formularza przesyłania obrazu
         html = '''<!DOCTYPE html>
                   <html>
@@ -78,7 +80,8 @@ class PeopleCounterUpload(Resource):
                   </html>'''
         return make_response(html)
 
-    def post(self):
+    @staticmethod
+    def post():
         # Sprawdzenie, czy plik został przesłany
         if 'file' not in request.files:
             return {'error': 'No file part'}, 400
@@ -102,7 +105,6 @@ class PeopleCounterUpload(Resource):
                 return {'filename': secure_filename(file.filename), 'peopleCount': len(rects)}, 200
             except Exception as e:
                 return {'error': str(e)}, 500
-
 
 
 api.add_resource(PeopleCounterDynamicUrl, '/dynamic')
