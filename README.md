@@ -58,10 +58,11 @@ Wszystkie endpointy zwracają odpowiedzi w formacie:
 
 W Folderze Examples, znajduje się skrypt `detect_people_and_display.py`, który wykorzystuje bibliotekę OpenCV do detekcji osób na obrazach. Skrypt wczytuje obraz, przetwarza go za pomocą deskryptora HOG, a następnie wyświetla oryginalny obraz i obraz z zaznaczonymi wykrytymi osobami, informując o ich liczbie. Jest to narzędzie gotowe do użycia i dostosowania do własnych potrzeb w projektach związanych z przetwarzaniem obrazów i rozpoznawaniem obiektów. W katalogu znajdują się również przykładowe obrazy do analizy.
 
-- obrazy testowe pochodzą z serwisu: https://www.freepik.com/
 
 Przykład analizy
 ![Demo Image](./examples/demo.png)
+
+obrazy testowe pochodzą z serwisu: https://www.freepik.com/
 
 aktualizacja 30.01.2024
 
