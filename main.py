@@ -19,7 +19,7 @@ class PeopleCounter(Resource):
     @staticmethod
     def get():
         # Wczytywanie obrazu
-        filename = 'test01.jpg'
+        filename = 'images/test06.png'
         image = cv2.imread(filename)
         image = imutils.resize(image,
                                width=min(500, image.shape[1]))
