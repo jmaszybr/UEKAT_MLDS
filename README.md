@@ -41,3 +41,10 @@ Otwórz `http://localhost:5000/upload` w przeglądarce, aby użyć formularza do
 Wszystkie endpointy zwracają odpowiedzi w formacie JSON. Przykładowe odpowiedzi:
 - Sukces: `{ "filename": nazwa_pliku, "peopleCount": liczba }`
 - Błąd: `{ "error": "opis błędu" }`
+
+## Informacje dodatkowe
+
+W Folderze Examples, znajduje się skrypt `detect_people_and_display.py`, który wykorzystuje bibliotekę OpenCV do detekcji osób na obrazach. Skrypt wczytuje obraz, przetwarza go za pomocą deskryptora HOG, a następnie wyświetla oryginalny obraz i obraz z zaznaczonymi wykrytymi osobami, informując o ich liczbie. Jest to narzędzie gotowe do użycia i dostosowania do własnych potrzeb w projektach związanych z przetwarzaniem obrazów i rozpoznawaniem obiektów.
+
+Przykład analizy
+![Demo Image](./examples/demo.png)
