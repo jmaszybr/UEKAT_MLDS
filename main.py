@@ -3,7 +3,7 @@ import requests
 import imutils
 from io import BytesIO
 import numpy as np
-from flask import Flask, request, make_response, send_file
+from flask import Flask, request, make_response, jsonify
 from flask_restful import Resource, Api
 from werkzeug.utils import secure_filename
 from flask_cors import CORS  # 👈 DODANE
@@ -24,7 +24,15 @@ class PeopleCounter(Resource):
         image = cv2.imread(filename)
         image = imutils.resize(image, width=min(500, image.shape[1]))
         (rects, weights) = hog.detectMultiScale(image, winStride=(4, 4), padding=(8, 8), scale=1.05)
-        return {'filename': filename, 'peopleCount': len(rects)}
+
+        # Konwertuj prostokąty na listę współrzędnych
+        rect_list = [{"x": int(x), "y": int(y), "w": int(w), "h": int(h)} for (x, y, w, h) in rects]
+
+        return jsonify({
+            "filename": filename,
+            "peopleCount": len(rects),
+            "rects": rect_list
+        })
 
 
 class PeopleCounterDynamicUrl(Resource):
@@ -40,7 +48,14 @@ class PeopleCounterDynamicUrl(Resource):
             image = cv2.imdecode(np.frombuffer(image_bytes.read(), np.uint8), 1)
             image = imutils.resize(image, width=min(500, image.shape[1]))
             (rects, weights) = hog.detectMultiScale(image, winStride=(4, 4), padding=(8, 8), scale=1.05)
-            return {'url': url, 'peopleCount': len(rects)}
+
+            rect_list = [{"x": int(x), "y": int(y), "w": int(w), "h": int(h)} for (x, y, w, h) in rects]
+
+            return jsonify({
+                "url": url,
+                "peopleCount": len(rects),
+                "rects": rect_list
+            })
         except requests.RequestException as e:
             return {'error': str(e)}, 500
 
@@ -91,19 +106,13 @@ class PeopleCounterUpload(Resource):
                 (rects, weights) = hog.detectMultiScale(image, winStride=(4, 4),
                                                         padding=(8, 8), scale=1.05)
 
-                # Rysowanie prostokątów na wykrytych ludziach
-                for (x, y, w, h) in rects:
-                    cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                rect_list = [{"x": int(x), "y": int(y), "w": int(w), "h": int(h)} for (x, y, w, h) in rects]
 
-                # Konwersja obrazu do PNG
-                _, buffer = cv2.imencode('.png', image)
-                image_bytes = BytesIO(buffer)
-
-                # Wysyłka obrazu z nagłówkami
-                response = make_response(send_file(image_bytes, mimetype='image/png'))
-                response.headers['X-Filename'] = secure_filename(file.filename)
-                response.headers['X-People-Count'] = str(len(rects))
-                return response
+                return jsonify({
+                    "filename": secure_filename(file.filename),
+                    "peopleCount": len(rects),
+                    "rects": rect_list
+                })
 
             except Exception as e:
                 return {'error': str(e)}, 500
