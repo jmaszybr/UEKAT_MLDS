@@ -3,7 +3,7 @@ import requests
 import imutils
 from io import BytesIO
 import numpy as np
-from flask import Flask, request, make_response
+from flask import Flask, request, make_response, send_file
 from flask_restful import Resource, Api
 from werkzeug.utils import secure_filename
 from flask_cors import CORS  # 👈 DODANE
@@ -20,44 +20,27 @@ api = Api(app)
 class PeopleCounter(Resource):
     @staticmethod
     def get():
-        # Wczytywanie obrazu
         filename = 'images/test06.png'
         image = cv2.imread(filename)
         image = imutils.resize(image, width=min(500, image.shape[1]))
-
-        # Wykrywanie ludzi na obrazie
         (rects, weights) = hog.detectMultiScale(image, winStride=(4, 4), padding=(8, 8), scale=1.05)
-
-        # Zwraca nazwę pliku i liczbę wykrytych ludzi
         return {'filename': filename, 'peopleCount': len(rects)}
 
 
 class PeopleCounterDynamicUrl(Resource):
     @staticmethod
     def get():
-        # Pobieranie adresu URL z parametrów zapytania
         url = request.args.get('url')
-
-        # Sprawdzanie, czy URL został podany
         if not url:
             return {'error': 'No URL provided'}, 400
-
         try:
-            # Pobieranie obrazu z URL
             response = requests.get(url)
             response.raise_for_status()
-
-            # Konwersja zawartości odpowiedzi na obraz
             image_bytes = BytesIO(response.content)
             image = cv2.imdecode(np.frombuffer(image_bytes.read(), np.uint8), 1)
             image = imutils.resize(image, width=min(500, image.shape[1]))
-
-            # Wykrywanie ludzi na obrazie
             (rects, weights) = hog.detectMultiScale(image, winStride=(4, 4), padding=(8, 8), scale=1.05)
-
-            # Zwraca URL i liczbę wykrytych ludzi
             return {'url': url, 'peopleCount': len(rects)}
-
         except requests.RequestException as e:
             return {'error': str(e)}, 500
 
@@ -65,46 +48,21 @@ class PeopleCounterDynamicUrl(Resource):
 class PeopleCounterUpload(Resource):
     @staticmethod
     def get():
-        # HTML do wyświetlania formularza przesyłania obrazu z dodanym stylem CSS
         html = '''<!DOCTYPE html>
                   <html>
                   <head>
                       <title>Upload Image</title>
                       <style>
-                          body {
-                              font-family: Arial, sans-serif;
-                              background-color: #f4f4f4;
-                              display: flex;
-                              flex-direction: column;
-                              align-items: center;
-                              justify-content: center;
-                              height: 100vh;
-                              margin: 0;
-                          }
-                          h1 {
-                              color: #333;
-                              margin-bottom: 20px;
-                          }
-                          form {
-                              background-color: #fff;
-                              padding: 20px;
-                              border-radius: 8px;
-                              box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-                          }
-                          input[type=file] {
-                              margin-bottom: 10px;
-                          }
-                          input[type=submit] {
-                              background-color: #4CAF50;
-                              color: white;
-                              padding: 10px 15px;
-                              border: none;
-                              border-radius: 4px;
-                              cursor: pointer;
-                          }
-                          input[type=submit]:hover {
-                              background-color: #45a049;
-                          }
+                          body { font-family: Arial, sans-serif; background-color: #f4f4f4;
+                                 display: flex; flex-direction: column; align-items: center;
+                                 justify-content: center; height: 100vh; margin: 0; }
+                          h1 { color: #333; margin-bottom: 20px; }
+                          form { background-color: #fff; padding: 20px; border-radius: 8px;
+                                 box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
+                          input[type=file] { margin-bottom: 10px; }
+                          input[type=submit] { background-color: #4CAF50; color: white;
+                                 padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; }
+                          input[type=submit]:hover { background-color: #45a049; }
                       </style>
                   </head>
                   <body>
@@ -119,27 +77,34 @@ class PeopleCounterUpload(Resource):
 
     @staticmethod
     def post():
-        # Sprawdzenie, czy plik został przesłany
         if 'file' not in request.files:
             return {'error': 'No file part'}, 400
-
         file = request.files['file']
         if file.filename == '':
             return {'error': 'No selected file'}, 400
-
         if file:
             try:
-                # Czytanie obrazu bezpośrednio z przesłanego pliku
                 file_stream = file.read()
                 np_img = np.frombuffer(file_stream, np.uint8)
                 image = cv2.imdecode(np_img, cv2.IMREAD_COLOR)
                 image = imutils.resize(image, width=min(500, image.shape[1]))
+                (rects, weights) = hog.detectMultiScale(image, winStride=(4, 4),
+                                                        padding=(8, 8), scale=1.05)
 
-                # Wykorzystanie globalnego deskryptora HOG do detekcji ludzi
-                (rects, weights) = hog.detectMultiScale(image, winStride=(4, 4), padding=(8, 8), scale=1.05)
+                # Rysowanie prostokątów na wykrytych ludziach
+                for (x, y, w, h) in rects:
+                    cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
-                # Zwrócenie wyniku za pomocą return
-                return {'filename': secure_filename(file.filename), 'peopleCount': len(rects)}, 200
+                # Konwersja obrazu do PNG
+                _, buffer = cv2.imencode('.png', image)
+                image_bytes = BytesIO(buffer)
+
+                # Wysyłka obrazu z nagłówkami
+                response = make_response(send_file(image_bytes, mimetype='image/png'))
+                response.headers['X-Filename'] = secure_filename(file.filename)
+                response.headers['X-People-Count'] = str(len(rects))
+                return response
+
             except Exception as e:
                 return {'error': str(e)}, 500
 
