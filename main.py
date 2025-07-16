@@ -6,12 +6,14 @@ import numpy as np
 from flask import Flask, request, make_response
 from flask_restful import Resource, Api
 from werkzeug.utils import secure_filename
+from flask_cors import CORS  # 👈 DODANE
 
 # Inicjalizacja deskryptora HOG / detektora ludzi
 hog = cv2.HOGDescriptor()
 hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
 
 app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "*"}})  # 👈 DODANE
 api = Api(app)
 
 
@@ -21,13 +23,12 @@ class PeopleCounter(Resource):
         # Wczytywanie obrazu
         filename = 'images/test06.png'
         image = cv2.imread(filename)
-        image = imutils.resize(image,
-                               width=min(500, image.shape[1]))
+        image = imutils.resize(image, width=min(500, image.shape[1]))
 
         # Wykrywanie ludzi na obrazie
         (rects, weights) = hog.detectMultiScale(image, winStride=(4, 4), padding=(8, 8), scale=1.05)
 
-        # Zwraca nazwę ppliku i liczbę wykrytych ludzi
+        # Zwraca nazwę pliku i liczbę wykrytych ludzi
         return {'filename': filename, 'peopleCount': len(rects)}
 
 
