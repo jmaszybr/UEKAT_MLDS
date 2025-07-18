@@ -34,7 +34,6 @@ class PeopleCounter(Resource):
             "rects": rect_list
         })
 
-
 class PeopleCounterDynamicUrl(Resource):
     @staticmethod
     def get():
